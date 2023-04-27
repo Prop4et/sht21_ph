@@ -1,6 +1,14 @@
 #include "sht21.h"
+/*i2c instance used with the two defined pins*/
 static i2c_inst_t *i2c = i2c0;
 
+/**
+ * @brief utility function used to compute the crc after each readings
+ * 
+ * @param data the readings 
+ * @param number_of_bytes numbero of bytes read
+ * @return uint8_t the crc value
+ */
 static uint8_t calculate_checksum(uint8_t* data, uint32_t number_of_bytes){
     uint8_t crc = 0;
     //calculates 8-Bit checksum with given polynomial
@@ -16,11 +24,19 @@ static uint8_t calculate_checksum(uint8_t* data, uint32_t number_of_bytes){
     return crc;
 }
 
+/**
+ * @brief utility function used to write to the sht21 registers
+ * 
+ * @param reg the address of the register to write 
+ * @param buf data to write
+ * @param nbytes number of bytes to write
+ * @return uint8_t 0 if success, -1 otherwise
+ */
 static uint8_t sht21_write(uint8_t reg, const uint8_t *buf, uint32_t nbytes){
     int num_bytes_read = 0;
     uint8_t msg[nbytes +1];
     int8_t ret = 0;
-
+    /*composes the message, puts the address as the first element to write to the bus*/
     msg[0] = reg;
     for(int i = 0; i < nbytes; i++){
         msg[i+1] = buf[i];
@@ -33,6 +49,15 @@ static uint8_t sht21_write(uint8_t reg, const uint8_t *buf, uint32_t nbytes){
         return -1;
 }
 
+/**
+ * @brief utility function used to read from the sht21 sensor
+ * 
+ * @param reg the value of the register to be read
+ * @param buf buffer holding the read value
+ * @param nbytes number of bytes to read
+ * @param sleep_time amount of time waited after issuing the command before reading
+ * @return uint8_t 0 if success, -1 otherwise
+ */
 static uint8_t sht21_read(uint8_t reg, uint8_t *buf, uint32_t nbytes, int8_t sleep_time){
     int8_t num_bytes_read = 0;
     int8_t ret = 0;
@@ -40,10 +65,14 @@ static uint8_t sht21_read(uint8_t reg, uint8_t *buf, uint32_t nbytes, int8_t sle
     if(nbytes < 0){
         return num_bytes_read;
     }
+    //issue the command and wait the desired amount of time
     i2c_write_blocking(i2c, SHT21_ADDR, &reg, 1, false);
     sleep_ms(sleep_time);
+
     int i = 0;
+    //try max 20 time if no reading occurs 
     while(i < 20 && num_bytes_read == 0){
+        //read from the bus and check that the crc is right
         num_bytes_read = i2c_read_blocking(i2c, SHT21_ADDR, buf, nbytes, false);
         if(num_bytes_read != 0){
             if(calculate_checksum(buf, 2) != 0)
@@ -60,6 +89,13 @@ static uint8_t sht21_read(uint8_t reg, uint8_t *buf, uint32_t nbytes, int8_t sle
         return -1;
 }
 
+/**
+ * @brief converts the temperature signal output into temperature [°C] by following the formula in Chapter 6.2 of 
+ * https://www.sensirion.com/media/documents/120BBE4C/63500094/Sensirion_Datasheet_Humidity_Sensor_SHT21.pdf
+ * 
+ * @param buf buffer holding the temperature signal output
+ * @return float the value of the temperature in °C
+ */
 static float get_temperature(uint8_t* buf){
     float temp = 0;
     uint16_t unadjusted = 0;
@@ -69,6 +105,13 @@ static float get_temperature(uint8_t* buf){
     return temp;
 }
 
+/**
+ * @brief converts the humidity signal output into humidity [%RH] by following the formula in Chapter 6.1 of 
+ * https://www.sensirion.com/media/documents/120BBE4C/63500094/Sensirion_Datasheet_Humidity_Sensor_SHT21.pdf
+ * 
+ * @param buf buffer holding the humidity signal output
+ * @return float the value of the humidity in %RH
+ */
 static float get_humidity(uint8_t* buf){
     float hum = 0;
     uint32_t unadjusted = 0;

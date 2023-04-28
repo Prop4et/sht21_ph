@@ -41,11 +41,11 @@ uint8_t sht21_init(uint8_t sda_pin, uint8_t scl_pin);
  * 
  * @return float the temperature value (14 bits precision)
  */
-float temperature();
+float sht21_temperature();
 
 /**
  * @brief returns the humidity reading from the sensor
  * 
  * @return float the humidity value (12 bits precision)
  */
-float humidity();
+float sht21_humidity();

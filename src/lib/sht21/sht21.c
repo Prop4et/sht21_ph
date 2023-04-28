@@ -135,7 +135,7 @@ uint8_t sht21_init(uint8_t sda_pin, uint8_t scl_pin){
     return ret;
 }
 
-float temperature(){
+float sht21_temperature(){
     uint8_t ret = 0;
     uint8_t buf[3];
     ret = sht21_read(SHT21_T_NO_HOLD, buf, 3, SHT21_WAIT_T);
@@ -146,7 +146,7 @@ float temperature(){
     return -1000;
 }
 
-float humidity(){
+float sht21_humidity(){
     uint8_t ret = 0;
     uint8_t buf[3];
     ret = sht21_read(SHT21_H_NO_HOLD, buf, 3, SHT21_WAIT_H);

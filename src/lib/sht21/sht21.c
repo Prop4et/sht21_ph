@@ -123,8 +123,13 @@ static float get_humidity(uint8_t* buf){
 
 uint8_t sht21_init(uint8_t sda_pin, uint8_t scl_pin){
     i2c_init(i2c, 400*1000);
-    gpio_set_function(sda_pin, GPIO_FUNC_I2C);
-    gpio_set_function(scl_pin, GPIO_FUNC_I2C);
+    if(sda_pin != -1 && scl_pin != -1){
+        gpio_set_function(sda_pin, GPIO_FUNC_I2C);
+        gpio_set_function(scl_pin, GPIO_FUNC_I2C);
+    }else{
+        gpio_set_function(SDA_PIN, GPIO_FUNC_I2C);
+        gpio_set_function(SCL_PIN, GPIO_FUNC_I2C);
+    }
     uint8_t ret = sht21_write(SHT21_SOFT_RESET, NULL, 0);
     sleep_ms(SHT21_WAIT_SOFT_RESET);
     return ret;

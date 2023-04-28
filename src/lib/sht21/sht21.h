@@ -23,6 +23,10 @@
 #define SHT21_WAIT_H            UINT32_C(22)
 #define SHT21_WAIT_SOFT_RESET   UINT32_C(50)
 
+/*Default pins*/
+#define SDA_PIN                 8
+#define SCL_PIN                 9
+
 /**
  * @brief Initialized the sht21 sensor
  * 

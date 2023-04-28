@@ -183,5 +183,7 @@ pico_sdk_init()
 
 # add_definitions(-Dsx126x)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/lib/sht21)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/lib/motor)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/lib/ph_driver)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/executables)
 

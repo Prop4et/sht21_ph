@@ -1,9 +1,15 @@
 #include "pico/stdlib.h"
+#include "stdlib.h"
+#include "hardware/adc.h"
+#include "hardware/gpio.h"
+#include "../motor/motor_driver.h"
 #include <string.h>
 
 #define BASE_ADJ_COEFF          1.3
-#define BASE_DC                 0.7
-#define N_SENS                   3
+#define N_SENS                  3
+#define ADC_PIN                 27
+#define MUX_PIN1                10
+#define MUX_PIN2                11
 /**
  * @brief Initializes the adc pin to read
  */
@@ -12,7 +18,6 @@ struct ph_driver{
     uint8_t spin1;
     uint8_t spin2;
     float coeffAdj[N_SENS];
-    float duty_cycle;
 };
 
 /**
@@ -26,12 +31,13 @@ struct ph_driver{
  * @param mux2 second pin for the multiplexer
  * @param dutycycle dutycycle for the pump (i guess)
  */
-void ph_init(struct ph_driver *dev, float *coeff, uint8_t mux1, uint8_t mux2, float dutycycle);
+void ph_init(struct ph_driver *dev, float *coeff, uint8_t mux1, uint8_t mux2);
 
 /**
  * @brief computes the values for the ph for each sensor
  * 
  * @param dev structure holding the different values
+ * @param m structure holding the motor parameters
  * @param buf buffer for the ph results
  * 
  * @return uint8_t is an 8-bit mask used to determine which sensor read the ph 
@@ -41,4 +47,4 @@ void ph_init(struct ph_driver *dev, float *coeff, uint8_t mux1, uint8_t mux2, fl
  * 001 -> 1st sensor
  * (or) combinations determine the rest 
  */
-uint8_t ph_get(struct ph_driver dev, float* buf /*len is N_SENS*/);
+uint8_t ph_get(struct ph_driver dev, struct motor m, float* buf /*len is N_SENS*/);

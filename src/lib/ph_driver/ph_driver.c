@@ -70,14 +70,20 @@ static uint8_t stablePh(uint16_t analog_value, float adj_coeff, float* buf, int 
     uint16_t prev_analog_value = analog_value;
     analog_value = adc_read();
     uint8_t cnt = 0;
+    buf[buf_index] = -1000;
     while((abs(prev_analog_value - analog_value) > 7) || (cnt < 12)){
         sleep_ms(10000);
         prev_analog_value = analog_value;
         analog_value = adc_read();
         cnt++;
     }
-    buf[buf_index] = ((((float)analog_value/1000) - 4.52)/-0.216)-adj_coeff;
-    return cnt >= 12 ? 0 : 1;
+    
+    if(cnt < 12){
+        buf[buf_index] = ((((float)analog_value/1000) - 4.52)/-0.216)-adj_coeff;
+        return 1;
+    }
+
+    return 0;
 }
 
 uint8_t ph_get(struct ph_driver dev, struct motor m, float* buf){

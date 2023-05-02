@@ -113,7 +113,9 @@ struct uplink {
     uint16_t id; 
     float temp;
     float hum;
-    float ph[3];
+    float ph1;
+    float ph2;
+    float ph3;
 };
 
 int main(){
@@ -151,13 +153,17 @@ int main(){
         pkt.temp = sht21_temperature();
         pkt.hum = sht21_humidity();
         uint8_t bitmask = ph_get(ph, m, ph_buf);
-        for(int i = 0; i<N_SENS; i++){
+        /*for(int i = 0; i<N_SENS; i++){
             if(bitmask & CHECKMASK)
                 pkt.ph[i] = ph_buf[i];
             else
                 pkt.ph[i] = -1000;
             bitmask = bitmask >> 1;
-        }
+        }*/
+        pkt.ph1 =  ph_buf[0];
+        pkt.ph2 =  ph_buf[1];
+        pkt.ph3 =  ph_buf[2];
+
 
         if (lorawan_send_unconfirmed(&pkt, sizeof(struct uplink), 2) < 0) {
             printf("Failed sending\n");

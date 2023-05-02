@@ -173,7 +173,8 @@ int main(){
             }
             printf("\n");
         }
-        sleep_run_from_xosc();
-        rtc_sleep(0, 0, 1);
+        sleep_ms(30000);
+        /*sleep_run_from_xosc();
+        rtc_sleep(0, 0, 1);*/
     }
 }

@@ -4,6 +4,11 @@
 #include "pico/lorawan.h"
 #include "hardware/watchdog.h"
 
+#include "pico/sleep.h"
+#include "hardware/clocks.h"
+#include "hardware/rosc.h"
+#include "hardware/structs/scb.h"
+
 #include "../../lib/ph_driver/ph_driver.h"
 #include "../../lib/sht21/sht21.h"
 #include "../../lib/motor/motor_driver.h"
@@ -19,6 +24,57 @@ void software_reset()
 {
     watchdog_enable(1, 1);
     while(1);
+}
+
+/**
+ * @brief callback called after the interrupt of a rtc sleep, resets the clock and reestablishes the output if needed
+ * 
+ */
+static void sleep_callback(){
+
+    rosc_write(&rosc_hw->ctrl, ROSC_CTRL_ENABLE_BITS);
+    
+    //reset procs back to default
+    scb_hw->scr = scb_orig;
+    clocks_hw->sleep_en0 = clock0_orig;
+    clocks_hw->sleep_en1 = clock1_orig;
+
+    //reset clocks
+    clocks_init();
+    stdio_uart_init();
+}
+
+/**
+ * @brief function to go into deep sleep mode, stops the internal clocks and leaves the minimal logic to wake up active
+ * 
+ * @param secs seconds to sleep
+ * @param mins minutes to sleep
+ * @param hrs  hours to sleep
+ */
+static void rtc_sleep(uint8_t secs, uint8_t mins, uint8_t hrs){
+    datetime_t t = {
+        .year = 2023,
+        .month = 1,
+        .day = 01,
+        .dotw = 1,
+        .hour = 00,
+        .min = 00,
+        .sec = 00
+    };
+
+    datetime_t t_alarm = {
+        .year = 2023,
+        .month = 1,
+        .day = 01,
+        .dotw = 1,
+        .hour = hrs,
+        .min = mins,
+        .sec = secs
+    };
+    
+    rtc_init();
+    rtc_set_datetime(&t);
+    sleep_goto_sleep_until(&t_alarm, &sleep_callback);
 }
 const struct lorawan_sx12xx_settings sx12xx_settings = {
     .spi = {
@@ -117,6 +173,7 @@ int main(){
             }
             printf("\n");
         }
-        sleep_ms(3600000);//1hr
+        sleep_run_from_xosc();
+        rtc_sleep(0, 0, 1);
     }
 }

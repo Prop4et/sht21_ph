@@ -1,3 +1,6 @@
+#ifndef MOTOR_DRIVER_H
+#define MOTOR_DRIVER_H
+
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
 
@@ -6,10 +9,16 @@
 #define BASE_DC                 0.5
 #define WRAP                    50000
 #define CLOCK                   250
+
 /*
 With wrap = 50000 and clock = 250 -> freq = 10
 freq = 125MHz/(WRAP*CLOCK) = 125000000/(50000*250) = 125000000/12500000 = 10
 */
+
+/**
+ * @brief 
+ * 
+ */
 struct motor{
     uint8_t pwm_pin;
     uint slice_num;
@@ -18,6 +27,8 @@ struct motor{
     uint16_t clock;
     float duty_cycle;
 };
+
+#endif
 
 /**
  * @brief initializes the parameters for the motor

@@ -1,5 +1,8 @@
 /*Header file for the sht21 sensor library, specification come from the datasheet
 (https://www.sensirion.com/media/documents/120BBE4C/63500094/Sensirion_Datasheet_Humidity_Sensor_SHT21.pdf)*/
+#ifndef SHT21_H
+#define SHT21_H
+
 #include "hardware/i2c.h"
 #include "pico/stdlib.h"
 #include <string.h>
@@ -27,6 +30,7 @@
 #define SDA_PIN                 8
 #define SCL_PIN                 9
 
+#endif
 /**
  * @brief Initialized the sht21 sensor
  * 

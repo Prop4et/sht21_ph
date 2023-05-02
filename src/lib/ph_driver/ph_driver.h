@@ -1,3 +1,6 @@
+#ifndef PH_DRIVER_H
+#define PH_DRIVER_H
+
 #include "pico/stdlib.h"
 #include "stdlib.h"
 #include "hardware/adc.h"
@@ -5,11 +8,12 @@
 #include "../motor/motor_driver.h"
 #include <string.h>
 
+
 #define BASE_ADJ_COEFF          1.3
 #define N_SENS                  3
 #define ADC_PIN                 27
-#define MUX_PIN1                10
-#define MUX_PIN2                11
+#define MUX_PIN1                6
+#define MUX_PIN2                7
 /**
  * @brief Initializes the adc pin to read
  */
@@ -20,6 +24,7 @@ struct ph_driver{
     float coeffAdj[N_SENS];
 };
 
+#endif
 /**
  * @brief initializes the ph sensor by initializing the gpio27 pin for adc readings and the structure
  * 

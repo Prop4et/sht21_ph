@@ -12,8 +12,8 @@ void ph_init(struct ph_driver *dev, float* coeff, uint8_t mux1, uint8_t mux2){
         dev->spin1 = mux1;
         dev->spin2 = mux2;
     }else{
-        dev->spin1 = MUX_PIN1;//TODO
-        dev->spin2 = MUX_PIN2;//TODO
+        dev->spin1 = MUX_PIN1;
+        dev->spin2 = MUX_PIN2;
     }
 
     if(coeff == NULL){
@@ -29,8 +29,8 @@ void ph_init(struct ph_driver *dev, float* coeff, uint8_t mux1, uint8_t mux2){
     0 | 1 reads sensor 1
     1 | 0 reads sensor 2
     */
-    gpio_set_dir(dev->muxpin1, GPIO_OUT);
-    gpio_set_dir(dev->muxpin2, GPIO_OUT);
+    gpio_set_dir(dev->spin1, GPIO_OUT);
+    gpio_set_dir(dev->spin1, GPIO_OUT);
 }
 
 /**

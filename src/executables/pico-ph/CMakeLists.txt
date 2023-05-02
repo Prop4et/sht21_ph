@@ -11,6 +11,7 @@ target_link_libraries(pico-ph
     sht21-lib
     ph-lib
     motor-lib
+    pico_lorawan
     pico_stdlib
     hardware_i2c
     pico_stdio_usb

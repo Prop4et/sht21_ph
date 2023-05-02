@@ -1,2 +1,3 @@
 .vscode
 build
+src/executables/pico-ph/lora-config.h
